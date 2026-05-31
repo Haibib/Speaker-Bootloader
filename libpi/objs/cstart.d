@@ -1,0 +1,25 @@
+objs/cstart.o: staff-src/cstart.c \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/memmap.h
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/memmap.h:
