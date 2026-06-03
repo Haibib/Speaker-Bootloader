@@ -5,11 +5,20 @@
 
 void notmain(void) {
     amplifier_enable();
-    i2s_init(sample_rate);
+    i2s_init(SAMPLE_RATE);
     i2s_tx_enable();
     delay_ms(100);
+    setup();
 
-    play_sine(220, 5000, 0x04000000, 44100);
-    play_sine(440, 5000, 0x02000000, 44100);
-    play_sine(880, 5000, 0x01000000, 44100);
+    for (uint32_t i = 0; i < 100000; i++) {
+        play_random_start();
+    }
+
+
+    // for (uint32_t i = 0; i < NUM_FREQS; i++) {
+    //     play_sine(MIN_FREQ + i * FREQ_BUCKET, 2000, MAX_AMPLITUDE, SAMPLE_RATE);
+    // }
+
+    //play_sine(MIN_FREQ, MAX_AMPLITUDE, SAMPLE_RATE);
+    // play_combined(200000);
 }

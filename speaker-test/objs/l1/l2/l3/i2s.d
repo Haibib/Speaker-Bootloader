@@ -18,7 +18,8 @@ objs/l1/l2/l3//i2s.o: i2s.c \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/cdefs-compat.h \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_math.h \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/pi-random.h
 
 /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
 
@@ -61,3 +62,5 @@ gpio-raw.h:
 /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h:
 
 /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h:
+
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/pi-random.h:
