@@ -137,8 +137,8 @@ void i2s_init(uint32_t clock) {
 
 
     // page 131: receive config: rxc_a
-    pcm->rxc_a = (1u << 31) | (1u << 30) | (1u << 19);
-    pcm->txc_a = (1u  << 31) | (1u << 30) | (1u << 20) | (1u << 19) |(1u  << 15) | (1u << 14) | (1u << 9) | (1u << 4) | (1u << 3);
+    pcm->rxc_a = (1u << 31) | (1u << 30) | (1u << 20) | (8u << 16);
+    pcm->txc_a = (1u  << 31) | (1u << 30) | (1u << 20) | (8u << 16) |(1u  << 15) | (1u << 14) | (33u << 4) | 8u;
 
     pcm->cs_a = PCM_EN | PCM_TXCLR | PCM_RXCLR | PCM_SYNC;
     while(!(pcm->cs_a & PCM_SYNC));
@@ -160,6 +160,17 @@ void i2s_tx_enable(void) {
     while(!(pcm->cs_a & PCM_SYNC));
 
     pcm->cs_a = PCM_EN | PCM_TXON;
+    dev_barrier();
+}
+
+void i2s_rx_enable(void) {
+    pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
+
+    // clear fifo
+    pcm->cs_a = PCM_EN | PCM_RXCLR | PCM_SYNC;
+    while(!(pcm->cs_a & PCM_SYNC));
+
+    pcm->cs_a = PCM_EN | PCM_RXON;
     dev_barrier();
 }
 
