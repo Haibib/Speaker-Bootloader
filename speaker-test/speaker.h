@@ -9,6 +9,8 @@
 #include "math-protos.h"
 #include "pi-random.h"
 
+#define SYNC_LENGTH 2
+
 enum {
     gain_pin = 23,
     sd_pin = 25,
@@ -23,14 +25,14 @@ enum {
     NUM_BYTES_PER_PERIOD = 1,
     SAMPLE_RATE = 59000,
     NUM_FREQS = 8 * NUM_BYTES_PER_PERIOD,
-    MAX_AMPLITUDE = 0x10000000,
+    MAX_AMPLITUDE = 0x40000000,
     AMPLITUDE = MAX_AMPLITUDE / NUM_FREQS,
 
-    MIN_FREQ = 1000,
-    MAX_FREQ = 8000,
+    MIN_FREQ = 2000,
+    MAX_FREQ = 16000,
     FREQ_BUCKET = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
-    DURATION_us = 17000,
+    DURATION_us = 8678,
 };
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
@@ -56,9 +58,11 @@ static int ready = 0;
 static uint32_t freqs[NUM_FREQS];
 static uint32_t phase_steps[NUM_FREQS];
 static uint32_t sine_phase = 0;
+static uint32_t start_time = 0;
+static uint32_t period_count = 0;
 
-static inline void bytes_to_bits(const uint8_t *bytes, uint8_t bits[NUM_FREQS]) {
-    for (uint32_t i = 0; i < NUM_BYTES_PER_PERIOD; i++) {
+static inline void bytes_to_bits(const uint8_t *bytes, uint8_t bits[NUM_FREQS], uint32_t length) {
+    for (uint32_t i = 0; i < length; i++) {
         for (uint32_t j = 0; j < 8; j++) {
             bits[i * 8 + j] = (bytes[i] >> j) & 1;
         }
@@ -106,10 +110,10 @@ static inline void play_sine(uint32_t freq) {
 
 static inline void play_combined(uint8_t* bits) {
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
-    uint32_t num_samples = (uint32_t)((uint64_t)DURATION_us * SAMPLE_RATE / 1000000);
     uint32_t phases[NUM_FREQS] = {0};
+    uint32_t deadline = start_time + (++period_count) * DURATION_us;
 
-    for (uint32_t i = 0; i < num_samples; i++) {
+    while (timer_get_usec() < deadline) {
         int64_t sample = 0;
         for (uint32_t j = 0; j < NUM_FREQS; j++) {
             if (bits[j]) {
@@ -129,10 +133,10 @@ static inline void play_combined(uint8_t* bits) {
 
 static void play_random_start() {
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
-    uint32_t num_samples = (uint32_t)((uint64_t)DURATION_us * SAMPLE_RATE / 1000000);
+    uint32_t deadline = start_time + (++period_count) * DURATION_us;
     uint32_t phase_step = (uint32_t)((double)MIN_FREQ / (double)SAMPLE_RATE * (double)(1ULL << 32));
 
-    for (uint32_t i = 0; i < num_samples; i++) {
+    while (timer_get_usec() < deadline) {
         uint32_t random_amplitude = pi_random();
         uint32_t idx = sine_phase >> (32 - TABLE_BITS);
         uint32_t sample = ((int64_t)sine_table[idx] * random_amplitude) >> 31;
@@ -147,13 +151,15 @@ static void play_random_start() {
 }
 
 static inline void initial_synchronization() {
+    period_count = 0;
+    start_time = timer_get_usec();
     play_random_start();
     uint8_t bits[NUM_FREQS];
-    uint8_t bytes[1] = { 0x0F };
+    uint8_t bytes[SYNC_LENGTH] = { 0xFF, 0x0F };
     char debug_print[NUM_FREQS + 1];
 
     for (int i = 0; i < 1; i++) {
-        bytes_to_bits(bytes, bits);
+        bytes_to_bits(bytes, bits, SYNC_LENGTH);
         play_combined(bits);
     }
 }
@@ -163,22 +169,25 @@ static inline void send_string(const char *str, uint32_t length, uint32_t verbos
     uint8_t chunk[NUM_BYTES_PER_PERIOD];
     uint32_t num_periods = (length + NUM_BYTES_PER_PERIOD - 1) / NUM_BYTES_PER_PERIOD;
     char debug_print[length][NUM_FREQS + 1];
+    uint32_t differences[length];
 
     for (uint32_t i = 0; i < num_periods; i++) {
         for (uint32_t j = 0; j < NUM_BYTES_PER_PERIOD; j++) {
             uint32_t index = i * NUM_BYTES_PER_PERIOD + j;
             chunk[j] = (index < length) ? (uint8_t)str[index] : 0;
         }
-        bytes_to_bits(chunk, bits);
+        bytes_to_bits(chunk, bits, NUM_BYTES_PER_PERIOD);
+        uint32_t start = timer_get_usec();
         play_combined(bits);
+        uint32_t end = timer_get_usec();
+        differences[i] = end - start;
         if (verbose) {
             bits_to_str(bits, debug_print[i]);
         }
-        play_combined(bits);
     }
     if (verbose) {
         for (uint32_t i = 0; i < length; i++) {
-            printk("sending '%c': %s\n", str[i], debug_print[i]);
+            printk("sending '%c': %s difference: %d\n", str[i], debug_print[i], differences[i]);
         }
     }
 }
