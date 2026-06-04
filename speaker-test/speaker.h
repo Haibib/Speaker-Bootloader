@@ -21,12 +21,12 @@ enum {
     TABLE_SIZE = 1u << TABLE_BITS,
 
     SAMPLE_RATE = 96000,
-    NUM_FREQS = 16,
+    NUM_FREQS = 8,
     MAX_AMPLITUDE = 0x10000000,
     AMPLITUDE = MAX_AMPLITUDE / NUM_FREQS,
 
-    MIN_FREQ = 2000,
-    MAX_FREQ = 16000,
+    MIN_FREQ = 1000,
+    MAX_FREQ = 8000,
     FREQ_BUCKET = (MAX_FREQ - MIN_FREQ) / NUM_FREQS,
 
     DURATION_us = 17066,
@@ -54,15 +54,17 @@ static int32_t sine_table[TABLE_SIZE];
 static int ready = 0;
 static uint32_t freqs[NUM_FREQS];
 static uint32_t phase_steps[NUM_FREQS];
+static uint32_t sine_phase = 0;
+static uint32_t phases[NUM_FREQS] = {0};
 
-static inline uint8_t* bytes_to_bits(uint8_t first_byte, uint8_t second_byte, uint8_t bits[NUM_FREQS]) {
+static inline void bytes_to_bits(uint8_t first_byte, uint8_t second_byte, uint8_t bits[NUM_FREQS]) {
     for (uint32_t i = 0; i < 8; i++) {
         bits[i] = (first_byte >> i) & 1;
         bits[i + 8] = (second_byte >> i) & 1;
     }
 }
 
-static inline char* bits_to_str(const uint8_t bits[NUM_FREQS], char out[NUM_FREQS + 1]) {
+static inline void bits_to_str(const uint8_t bits[NUM_FREQS], char out[NUM_FREQS + 1]) {
     for (uint32_t i = 0; i < NUM_FREQS; i++) {
         out[i] = bits[i] ? '1' : '0';
     }
@@ -87,10 +89,9 @@ static inline void play_sine(uint32_t freq, int32_t amplitude, uint32_t sample_r
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
     uint32_t num_samples = (uint32_t)((uint64_t)DURATION_us * sample_rate / 1000000);
     uint32_t phase_step = (uint32_t)((double)freq / (double)sample_rate * (double)(1ULL << 32));
-    uint32_t phase = 0;
 
     for (uint32_t i = 0; i < num_samples; i++) {
-        uint32_t idx = phase >> (32 - TABLE_BITS);
+        uint32_t idx = sine_phase >> (32 - TABLE_BITS);
         uint32_t sample = ((int64_t)sine_table[idx] * amplitude) >> 31;
 
         while(!(pcm->cs_a & PCM_TXD)); 
@@ -98,34 +99,21 @@ static inline void play_sine(uint32_t freq, int32_t amplitude, uint32_t sample_r
         while(!(pcm->cs_a & PCM_TXD)); 
         pcm->fifo_a = sample;
 
-        phase += phase_step;
+        sine_phase += phase_step;
     }
 }
 
-static void play_random_start() {
-    for (uint32_t i = 0; i < NUM_FREQS; i++) {
-        uint32_t random_value = pi_random();
-        output("%d\n", random_value);
-        play_sine(MIN_FREQ, random_value, SAMPLE_RATE);
-    }
-}
-
-// static void send_symbol(const uint8_t bits[NUM_FREQS]) {
-//     for (uint32_t i = 0; i < NUM_FREQS; i++) {
-
-//     }
-// }
-
-static inline void play_combined(uint32_t duration) {
+static inline void play_combined(uint8_t* bits) {
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
     uint32_t num_samples = (uint32_t)((uint64_t)DURATION_us * SAMPLE_RATE / 1000000);
-    uint32_t phases[NUM_FREQS] = {0}; 
 
     for (uint32_t i = 0; i < num_samples; i++) {
         int64_t accum = 0;
         for (uint32_t j = 0; j < NUM_FREQS; j++) {
-            uint32_t idx = phases[j] >> (32 - TABLE_BITS);
-            accum += sine_table[idx];
+            if (bits[j]) {
+                uint32_t idx = phases[j] >> (32 - TABLE_BITS);
+                accum += sine_table[idx];
+            }
             phases[j] += phase_steps[j];
         }
         int32_t sample = (int32_t)((accum * (int64_t)AMPLITUDE) >> 31);
@@ -134,6 +122,54 @@ static inline void play_combined(uint32_t duration) {
         pcm->fifo_a = (uint32_t)sample;
         while (!(pcm->cs_a & PCM_TXD));
         pcm->fifo_a = (uint32_t)sample;
+    }
+}
+
+static void play_random_start() {
+    pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
+    uint32_t num_samples = (uint32_t)((uint64_t)DURATION_us * SAMPLE_RATE / 1000000);
+    uint32_t phase_step = (uint32_t)((double)MIN_FREQ / (double)SAMPLE_RATE * (double)(1ULL << 32));
+
+    for (uint32_t i = 0; i < num_samples; i++) {
+        uint32_t random_amplitude = pi_random();
+        uint32_t idx = sine_phase >> (32 - TABLE_BITS);
+        uint32_t sample = ((int64_t)sine_table[idx] * random_amplitude) >> 31;
+
+        while(!(pcm->cs_a & PCM_TXD)); 
+        pcm->fifo_a = sample;
+        while(!(pcm->cs_a & PCM_TXD)); 
+        pcm->fifo_a = sample;
+
+        sine_phase += phase_step;
+    }
+}
+
+static inline void initial_synchronization() {
+    // char debug_print[NUM_FREQS + 1];
+    // bits_to_str(bits, debug_print);
+    // printk("sending '%c' '%c': %s\n", first_byte ? second_byte : '?', debug_print);
+    play_random_start();
+    uint8_t bits[NUM_FREQS];
+    for (uint32_t i = NUM_FREQS - 1; i > 0; i--) {
+        for (uint32_t j = 0; j < NUM_FREQS; j++) {
+            bits[j] = j < i ? 1 : 0;
+        }
+        play_combined(bits);
+    }
+}
+
+static inline void send_string(const char *str) {
+    uint8_t bits[NUM_FREQS];
+    char debug_print[NUM_FREQS + 1];
+
+    while (*str) {
+        uint8_t first_byte = (uint8_t)*str++;
+        uint8_t second_byte = str ? (uint8_t)*str++ : 0;
+        bytes_to_bits(first_byte, second_byte, bits);
+        bits_to_str(bits, debug_print);
+        printk("sending '%c' '%c': %s\n", first_byte, second_byte ? second_byte : '?', debug_print);
+
+        play_combined(bits);
     }
 }
 

@@ -10,15 +10,12 @@ void notmain(void) {
     delay_ms(100);
     setup();
 
-    for (uint32_t i = 0; i < 100000; i++) {
-        play_random_start();
-    }
-
-
-    // for (uint32_t i = 0; i < NUM_FREQS; i++) {
-    //     play_sine(MIN_FREQ + i * FREQ_BUCKET, 2000, MAX_AMPLITUDE, SAMPLE_RATE);
+    // for (uint32_t i = 0; i < 100000; i++) {
+    //     play_random_start();
     // }
 
-    //play_sine(MIN_FREQ, MAX_AMPLITUDE, SAMPLE_RATE);
-    // play_combined(200000);
+    uint8_t bits[NUM_FREQS] = {1, 0, 1, 0, 0, 0, 0, 0, };
+    for (uint32_t i = 0; i < 10000; i++) {
+        play_combined(bits);
+    }
 }
