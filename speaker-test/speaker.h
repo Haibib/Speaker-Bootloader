@@ -9,8 +9,6 @@
 #include "math-protos.h"
 #include "pi-random.h"
 
-#define SYNC_LENGTH 2
-
 enum {
     gain_pin = 23,
     sd_pin = 25,
@@ -28,11 +26,11 @@ enum {
     MAX_AMPLITUDE = 0x40000000,
     AMPLITUDE = MAX_AMPLITUDE / NUM_FREQS,
 
-    MIN_FREQ = 2000,
-    MAX_FREQ = 16000,
+    MIN_FREQ = 1000,
+    MAX_FREQ = 8000,
     FREQ_BUCKET = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
-    DURATION_us = 8678,
+    DURATION_us = 17356,
 };
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
@@ -150,16 +148,17 @@ static void play_random_start() {
     }
 }
 
+#define SYNC_LENGTH 2
 static inline void initial_synchronization() {
     period_count = 0;
     start_time = timer_get_usec();
     play_random_start();
     uint8_t bits[NUM_FREQS];
-    uint8_t bytes[SYNC_LENGTH] = { 0xFF, 0x0F };
+    uint8_t bytes[SYNC_LENGTH][NUM_BYTES_PER_PERIOD] = { { 0xFF }, { 0x0F } };
     char debug_print[NUM_FREQS + 1];
 
-    for (int i = 0; i < 1; i++) {
-        bytes_to_bits(bytes, bits, SYNC_LENGTH);
+    for (int i = 0; i < SYNC_LENGTH; i++) {
+        bytes_to_bits(bytes[i], bits, NUM_BYTES_PER_PERIOD);
         play_combined(bits);
     }
 }
