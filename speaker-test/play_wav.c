@@ -3,19 +3,23 @@
 #include "i2s.h"
 #include "gpio-raw.h"
 
+static uint32_t verbose = 1;
+
 void notmain(void) {
     amplifier_enable();
     i2s_init(SAMPLE_RATE);
     i2s_tx_enable();
     delay_ms(100);
     setup();
-
-    // for (uint32_t i = 0; i < 100000; i++) {
-    //     play_random_start();
-    // }
-
-    uint8_t bits[NUM_FREQS] = {1, 0, 1, 0, 0, 0, 0, 0, };
-    for (uint32_t i = 0; i < 10000; i++) {
-        play_combined(bits);
+    
+    char* test = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (uint32_t i = 0; i < 1000000; i++) {
+        initial_synchronization();
+        send_string(test, strlen(test), verbose);
+        delay_ms(1000);
     }
+
+    // for (uint32_t i = 0; i < 10000; i++) {
+    //     play_sine(3000);
+    // }
 }
