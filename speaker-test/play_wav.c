@@ -20,12 +20,13 @@ void notmain(void) {
     //     play_combined(bits);
     // }
 
-    char* test = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char* test = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSTTUUVVWWXXYYZZ";
     for (uint32_t i = 0; i < 2000; i++) {
         initial_synchronization();
-        send_string(test, strlen(test), verbose);
+        send_data((uint8_t*)test, strlen(test), verbose);
         delay_ms(1000);
     }
+
     
     // char* test = "A";
     // for (uint32_t i = 0; i < 20; i++) {

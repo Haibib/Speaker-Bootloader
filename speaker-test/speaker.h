@@ -20,17 +20,17 @@ enum {
     TABLE_BITS = 10, 
     TABLE_SIZE = 1u << TABLE_BITS,
 
-    NUM_BYTES_PER_PERIOD = 1,
+    NUM_BYTES_PER_PERIOD = 2,
     SAMPLE_RATE = 59000,
     NUM_FREQS = 8 * NUM_BYTES_PER_PERIOD,
     MAX_AMPLITUDE = 0x40000000,
     AMPLITUDE = MAX_AMPLITUDE / NUM_FREQS,
 
     MIN_FREQ = 1000,
-    MAX_FREQ = 8000,
+    MAX_FREQ = 16000,
     FREQ_BUCKET = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
-    DURATION_us = 17356,
+    DURATION_us = 8678,
 };
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
@@ -58,6 +58,7 @@ static uint32_t phase_steps[NUM_FREQS];
 static uint32_t sine_phase = 0;
 static uint32_t start_time = 0;
 static uint32_t period_count = 0;
+static uint32_t phases[NUM_FREQS] = {0};
 
 static inline void bytes_to_bits(const uint8_t *bytes, uint8_t bits[NUM_FREQS], uint32_t length) {
     for (uint32_t i = 0; i < length; i++) {
@@ -108,7 +109,6 @@ static inline void play_sine(uint32_t freq) {
 
 static inline void play_combined(uint8_t* bits) {
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
-    uint32_t phases[NUM_FREQS] = {0};
     uint32_t deadline = start_time + (++period_count) * DURATION_us;
 
     while (timer_get_usec() < deadline) {
@@ -154,7 +154,7 @@ static inline void initial_synchronization() {
     start_time = timer_get_usec();
     play_random_start();
     uint8_t bits[NUM_FREQS];
-    uint8_t bytes[SYNC_LENGTH][NUM_BYTES_PER_PERIOD] = { { 0xFF }, { 0x0F } };
+    uint8_t bytes[SYNC_LENGTH][NUM_BYTES_PER_PERIOD] = { { 0xFF, 0xFF }, { 0x0F, 0x0F } };
     char debug_print[NUM_FREQS + 1];
 
     for (int i = 0; i < SYNC_LENGTH; i++) {
@@ -163,17 +163,17 @@ static inline void initial_synchronization() {
     }
 }
 
-static inline void send_string(const char *str, uint32_t length, uint32_t verbose) {
+static inline void send_data(const uint8_t *data, uint32_t length, uint32_t verbose) {
     uint8_t bits[NUM_FREQS];
     uint8_t chunk[NUM_BYTES_PER_PERIOD];
     uint32_t num_periods = (length + NUM_BYTES_PER_PERIOD - 1) / NUM_BYTES_PER_PERIOD;
-    char debug_print[length][NUM_FREQS + 1];
-    uint32_t differences[length];
+    char debug_print[num_periods][NUM_FREQS + 1];
+    uint32_t differences[num_periods];
 
     for (uint32_t i = 0; i < num_periods; i++) {
         for (uint32_t j = 0; j < NUM_BYTES_PER_PERIOD; j++) {
             uint32_t index = i * NUM_BYTES_PER_PERIOD + j;
-            chunk[j] = (index < length) ? (uint8_t)str[index] : 0;
+            chunk[j] = (index < length) ? data[index] : 0;
         }
         bytes_to_bits(chunk, bits, NUM_BYTES_PER_PERIOD);
         uint32_t start = timer_get_usec();
@@ -184,10 +184,12 @@ static inline void send_string(const char *str, uint32_t length, uint32_t verbos
             bits_to_str(bits, debug_print[i]);
         }
     }
+    
     if (verbose) {
-        for (uint32_t i = 0; i < length; i++) {
-            printk("sending '%c': %s difference: %d\n", str[i], debug_print[i], differences[i]);
+        for (uint32_t i = 0; i < num_periods; i++) {
+            printk("sending chunk %d: difference: %d\n", i, differences[i]);
         }
+        printk("freq bucket: %d\n", FREQ_BUCKET);
     }
 }
 
