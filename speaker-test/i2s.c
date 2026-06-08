@@ -1,7 +1,8 @@
 #include "rpi.h"
 #include "bit-support.h"
 #include "i2s.h"
-#include "speaker.h"
+#include "shared.h"
+// #include "speaker.h"
 
 struct pcm_div {
     uint32_t divi, divf, mash;
@@ -174,7 +175,7 @@ void i2s_rx_enable(void) {
     dev_barrier();
 }
 
-void i2s_put_frame(int32_t left, int32_t right) {
+void i2s_put_frame(int64_t left, int64_t right) {
     pcm_t *pcm = (pcm_t *)I2S_REGS_BASE;
 
     while(!(pcm->cs_a & PCM_TXD));

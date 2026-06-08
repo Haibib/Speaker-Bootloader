@@ -135,11 +135,10 @@ uint32_t i2s_get32(void);
 void i2s_tx_enable(void);
 void i2s_rx_enable(void);
 
-void i2s_put_frame(int32_t left, int32_t right);
+void i2s_put_frame(int64_t left, int64_t right);
 
 // convert 32-bit val to signed 18-bit mic result
-static inline long 
-i2s_to_mic_val(uint32_t v) {
+static inline long i2s_to_mic_val(uint32_t v) {
     uint32_t lo = bits_get(v, 0,13);
     if(lo != 0)
         panic("expected low 14 bits to be 0, have: %b\n", lo);

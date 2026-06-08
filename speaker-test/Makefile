@@ -1,5 +1,7 @@
 # PROGS += speaker-test.c
-PROGS += play_wav.c
+# PROGS += play_wav.c
+PROGS += speaker-send.c
+PROGS += mic-receive.c
 
 # if you need to override the install
 # BOOTLOADER = my-install
@@ -9,7 +11,7 @@ COMMON_SRC += i2s.c
 OPT_LEVEL = -Og
 
 # automatically run the code
-RUN = 1
+RUN = 0
 
 LIBS += $(LIBM)
 CFLAGS += $(LIBM_INC)
