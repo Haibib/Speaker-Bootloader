@@ -4,8 +4,8 @@
 
 enum {
     SAMPLE_RATE  = 59000,
-    SYM_SAMPLES  = 512,
-    SYM_MIDDLE   = 256,
+    SYM_SAMPLES  = 256,
+    SYM_MIDDLE   = 200,
     SYM_OFFSET   = (SYM_SAMPLES - SYM_MIDDLE) / 2,
     MAX_TONES    = 32,
 };
@@ -55,7 +55,7 @@ uint32_t goertzel_detect(const double *tones,   int    n_tones,
         sum_mag += mags[i];
     }
 
-    double rel_thresh = 0.5;
+    double rel_thresh = max_mag * 0.10;
 
     if(debug)
         output("noise=%f  thresh=%f  max_mag=%f  rel_thresh=%f\n",
@@ -64,10 +64,10 @@ uint32_t goertzel_detect(const double *tones,   int    n_tones,
     uint32_t mask = 0;
     for (int i = 0; i < n_tones && i < MAX_TONES; i++) {
         // int hit = (mags[i] > thresh) && (mags[i] > rel_thresh);
-        if(cal==1) {
+        if(cal==2) {
             threshold_mag[i] = mags[i] ;
-        } else if(cal==2) {
-            threshold_mag[i] = (threshold_mag[i] + mags[i]) / 4.0;
+        } else if(cal==1) {
+            threshold_mag[i] = (threshold_mag[i] + mags[i]) / 2.0;
             mag[i] = mags[i];
         } else {
             int hit = (mags[i] > threshold_mag[i]);
@@ -111,75 +111,66 @@ void notmain(void) {
         // output("time=%d\n", end - start);
 
 
-    double tones[] = { 1000, 2000, 3000, 4000,
-                       5000,  6000, 7000, 8000};
+    double tones[] = {1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000,
+                       9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000};
     int    n_tones = sizeof(tones) / sizeof(tones[0]);
 
 
     enum {num_bytes = 26};
     uint32_t buf[num_bytes];
-    double mag[num_bytes][sizeof(tones) / sizeof(tones[0])];
-    double threshold_mag[sizeof(tones) / sizeof(tones[0])];
+    double mag[num_bytes][n_tones];
+    double threshold_mag[n_tones];
 
-    for(int i=0;i<num_bytes;i++) {
-       for(int j=0;j<n_tones;j++) {
-            mag[i][j] = 0;
-            threshold_mag[j] = 0;
-        }
+    for(int i=0;i<n_tones;i++) {
+        threshold_mag[i] = 0;
     }
 
-    
 
-    for(int trials=0;trials<20;trials++) {
+    for(int i=0;i<20;i++) {
 
     while (1) {
-
-        goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 1);
         while(compute_start_variance(10) < 0.001) {}
-            // this is noise ignore
-
+        // this is noise ignore
         goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 0);
-
-
-        // this should be 0xFF, used to caliberate threshold_mag
-        goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 2);
-        // output("Calibrated values: \n\n\n");
-        //  for(int j=0;j<8;j++) {
-            
-        //     output("  %d Hz: mag=%f, threshold=%f  %s\n", (int)tones[j], mag[0][j], threshold_mag[j]);
-        // }
-        // continue;
-
-        uint32_t mask1  = goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 0);
         
-        if(mask1 != 0x0F) {
-            output("Expected 0x0F but got %x\n", mask1);
+        // this should be 0xFF
+        uint32_t mask1  = goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 1);
+        mask1  = goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[0][0], &threshold_mag[0], 0);
+        // uint32_t mask2  = goertzel_detect(tones, n_tones, 500.0, 4.0, 0);
+
+        if(mask1 != 0x0F0F) {
+            output("Expected 0x0F0F but got %x\n", mask1);
             for(int j=0;j<n_tones;j++) {
-            int hit = (mag[0][j] > threshold_mag[j]);
-            output("  %d Hz: mag=%f, threshold=%f  %s\n", (int)tones[j], mag[0][j], threshold_mag[j], hit ? "HIT" : "---");
+                int hit = (mag[0][j] > threshold_mag[j]);
+                output("  %d Hz: mag=%f, threshold=%f  %s\n", (int)tones[j], mag[0][j], threshold_mag[j], hit ? "HIT" : "---");
             }
             continue;
         }
-        
 
-        // for(int i=0;i<num_bytes;i++) {
-        //     buf[i] = goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[i][0], &threshold_mag[0], 0);
-        // }
-        // break;
+        for(int i=0;i<num_bytes;i++) {
+            buf[i] = goertzel_detect(tones, n_tones, 500.0, 4.0, 0, &mag[i][0], &threshold_mag[0], 0);
+        }
+        break;
     }
     int count = 0;
 
+
     for(int i=0;i<num_bytes;i++) {
-        if(buf[i%26]!='A'+(i%26)) {
+        if(buf[i%26]!= (('A'+(i%26)) | ('A'+(i%26))<<8)) {
             count++;
-            output("buf[%d]=%c, expected %c\n", i, buf[i], 'A'+(i%26));
+            output("buf[%d]=%x, expected %x \n", i, buf[i], (('A'+(i%26)) | ('A'+(i%26))<<8));
             for(int j=0;j<n_tones;j++) {
                 int hit = (mag[i][j] > threshold_mag[j]);
                 output("  %d Hz: mag=%f  %s\n", (int)tones[j], mag[i][j], hit ? "HIT" : "---");
             }
         }
     }
+    for(int j=0;j<n_tones;j++) {
+        output("  %d Hz: mag=%f, threshold=%f \n", (int)tones[j], mag[0][j], threshold_mag[j]);
+    }
     output("count=%d\n", count);
+
+
 
     for(int i=0;i<num_bytes;i++){
         output("%c", buf[i]);
