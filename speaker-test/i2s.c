@@ -1,8 +1,7 @@
 #include "rpi.h"
 #include "bit-support.h"
 #include "i2s.h"
-#include "shared.h"
-// #include "speaker.h"
+#include "speaker.h"
 
 struct pcm_div {
     uint32_t divi, divf, mash;

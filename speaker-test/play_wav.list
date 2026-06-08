@@ -657,67 +657,67 @@ Disassembly of section .text:
     89d4:	e5933020 	ldr	r3, [r3, #32]
     89d8:	e3530000 	cmp	r3, #0, 0
     89dc:	08bd8010 	popeq	{r4, pc}
-    89e0:	e3a03056 	mov	r3, #86, 0	; 0x56
+    89e0:	e3a03055 	mov	r3, #85, 0	; 0x55
     89e4:	e59f2100 	ldr	r2, [pc, #256]	; 8aec <pcm_check_initial+0x1e0>
     89e8:	e59f1100 	ldr	r1, [pc, #256]	; 8af0 <pcm_check_initial+0x1e4>
     89ec:	e59f0100 	ldr	r0, [pc, #256]	; 8af4 <pcm_check_initial+0x1e8>
     89f0:	eb0005c8 	bl	a118 <printk>
     89f4:	eb000855 	bl	ab50 <clean_reboot>
-    89f8:	e3a0303b 	mov	r3, #59, 0	; 0x3b
+    89f8:	e3a0303a 	mov	r3, #58, 0	; 0x3a
     89fc:	e59f20e8 	ldr	r2, [pc, #232]	; 8aec <pcm_check_initial+0x1e0>
     8a00:	e59f10e8 	ldr	r1, [pc, #232]	; 8af0 <pcm_check_initial+0x1e4>
     8a04:	e59f00e8 	ldr	r0, [pc, #232]	; 8af4 <pcm_check_initial+0x1e8>
     8a08:	eb0005c2 	bl	a118 <printk>
     8a0c:	eb00084f 	bl	ab50 <clean_reboot>
-    8a10:	e3a0303d 	mov	r3, #61, 0	; 0x3d
+    8a10:	e3a0303c 	mov	r3, #60, 0	; 0x3c
     8a14:	e59f20d0 	ldr	r2, [pc, #208]	; 8aec <pcm_check_initial+0x1e0>
     8a18:	e59f10d0 	ldr	r1, [pc, #208]	; 8af0 <pcm_check_initial+0x1e4>
     8a1c:	e59f00d0 	ldr	r0, [pc, #208]	; 8af4 <pcm_check_initial+0x1e8>
     8a20:	eb0005bc 	bl	a118 <printk>
     8a24:	eb000849 	bl	ab50 <clean_reboot>
-    8a28:	e3a0303f 	mov	r3, #63, 0	; 0x3f
+    8a28:	e3a0303e 	mov	r3, #62, 0	; 0x3e
     8a2c:	e59f20b8 	ldr	r2, [pc, #184]	; 8aec <pcm_check_initial+0x1e0>
     8a30:	e59f10b8 	ldr	r1, [pc, #184]	; 8af0 <pcm_check_initial+0x1e4>
     8a34:	e59f00b8 	ldr	r0, [pc, #184]	; 8af4 <pcm_check_initial+0x1e8>
     8a38:	eb0005b6 	bl	a118 <printk>
     8a3c:	eb000843 	bl	ab50 <clean_reboot>
-    8a40:	e3a03043 	mov	r3, #67, 0	; 0x43
+    8a40:	e3a03042 	mov	r3, #66, 0	; 0x42
     8a44:	e59f20a0 	ldr	r2, [pc, #160]	; 8aec <pcm_check_initial+0x1e0>
     8a48:	e59f10a0 	ldr	r1, [pc, #160]	; 8af0 <pcm_check_initial+0x1e4>
     8a4c:	e59f00a0 	ldr	r0, [pc, #160]	; 8af4 <pcm_check_initial+0x1e8>
     8a50:	eb0005b0 	bl	a118 <printk>
     8a54:	eb00083d 	bl	ab50 <clean_reboot>
-    8a58:	e3a03045 	mov	r3, #69, 0	; 0x45
+    8a58:	e3a03044 	mov	r3, #68, 0	; 0x44
     8a5c:	e59f2088 	ldr	r2, [pc, #136]	; 8aec <pcm_check_initial+0x1e0>
     8a60:	e59f1088 	ldr	r1, [pc, #136]	; 8af0 <pcm_check_initial+0x1e4>
     8a64:	e59f0088 	ldr	r0, [pc, #136]	; 8af4 <pcm_check_initial+0x1e8>
     8a68:	eb0005aa 	bl	a118 <printk>
     8a6c:	eb000837 	bl	ab50 <clean_reboot>
-    8a70:	e3a03047 	mov	r3, #71, 0	; 0x47
+    8a70:	e3a03046 	mov	r3, #70, 0	; 0x46
     8a74:	e59f2070 	ldr	r2, [pc, #112]	; 8aec <pcm_check_initial+0x1e0>
     8a78:	e59f1070 	ldr	r1, [pc, #112]	; 8af0 <pcm_check_initial+0x1e4>
     8a7c:	e59f0070 	ldr	r0, [pc, #112]	; 8af4 <pcm_check_initial+0x1e8>
     8a80:	eb0005a4 	bl	a118 <printk>
     8a84:	eb000831 	bl	ab50 <clean_reboot>
-    8a88:	e3a03049 	mov	r3, #73, 0	; 0x49
+    8a88:	e3a03048 	mov	r3, #72, 0	; 0x48
     8a8c:	e59f2058 	ldr	r2, [pc, #88]	; 8aec <pcm_check_initial+0x1e0>
     8a90:	e59f1058 	ldr	r1, [pc, #88]	; 8af0 <pcm_check_initial+0x1e4>
     8a94:	e59f0058 	ldr	r0, [pc, #88]	; 8af4 <pcm_check_initial+0x1e8>
     8a98:	eb00059e 	bl	a118 <printk>
     8a9c:	eb00082b 	bl	ab50 <clean_reboot>
-    8aa0:	e3a0304d 	mov	r3, #77, 0	; 0x4d
+    8aa0:	e3a0304c 	mov	r3, #76, 0	; 0x4c
     8aa4:	e59f2040 	ldr	r2, [pc, #64]	; 8aec <pcm_check_initial+0x1e0>
     8aa8:	e59f1040 	ldr	r1, [pc, #64]	; 8af0 <pcm_check_initial+0x1e4>
     8aac:	e59f0040 	ldr	r0, [pc, #64]	; 8af4 <pcm_check_initial+0x1e8>
     8ab0:	eb000598 	bl	a118 <printk>
     8ab4:	eb000825 	bl	ab50 <clean_reboot>
-    8ab8:	e3a03051 	mov	r3, #81, 0	; 0x51
+    8ab8:	e3a03050 	mov	r3, #80, 0	; 0x50
     8abc:	e59f2028 	ldr	r2, [pc, #40]	; 8aec <pcm_check_initial+0x1e0>
     8ac0:	e59f1028 	ldr	r1, [pc, #40]	; 8af0 <pcm_check_initial+0x1e4>
     8ac4:	e59f0028 	ldr	r0, [pc, #40]	; 8af4 <pcm_check_initial+0x1e8>
     8ac8:	eb000592 	bl	a118 <printk>
     8acc:	eb00081f 	bl	ab50 <clean_reboot>
-    8ad0:	e3a03054 	mov	r3, #84, 0	; 0x54
+    8ad0:	e3a03053 	mov	r3, #83, 0	; 0x53
     8ad4:	e59f2010 	ldr	r2, [pc, #16]	; 8aec <pcm_check_initial+0x1e0>
     8ad8:	e59f1010 	ldr	r1, [pc, #16]	; 8af0 <pcm_check_initial+0x1e4>
     8adc:	e59f0010 	ldr	r0, [pc, #16]	; 8af4 <pcm_check_initial+0x1e8>
@@ -741,7 +741,7 @@ Disassembly of section .text:
     8b1c:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
     8b20:	e24dd00c 	sub	sp, sp, #12, 0
     8b24:	e58d1000 	str	r1, [sp]
-    8b28:	e3a0300f 	mov	r3, #15, 0
+    8b28:	e3a0300e 	mov	r3, #14, 0
     8b2c:	e59f2014 	ldr	r2, [pc, #20]	; 8b48 <clock_to_div+0x50>
     8b30:	e59f1014 	ldr	r1, [pc, #20]	; 8b4c <clock_to_div+0x54>
     8b34:	e59f0014 	ldr	r0, [pc, #20]	; 8b50 <clock_to_div+0x58>
