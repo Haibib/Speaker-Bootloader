@@ -13,8 +13,8 @@ enum {
 
     SAMPLE_RATE = 59000,
     NUM_FREQS = 8 * NUM_BYTES_PER_PERIOD,
-    SYMBOL_SAMPLES = 256,
-    WINDOW_SAMPLES = 200,
+    SYMBOL_SAMPLES = 512,
+    WINDOW_SAMPLES = 400,
     WINDOW_OFFSET  = (SYMBOL_SAMPLES - WINDOW_SAMPLES) / 2,
 
 
@@ -47,7 +47,7 @@ enum {
 
 struct payload {
     uint16_t size;
-    uint16_t cksum;
+    uint32_t cksum;
     uint16_t data[PAYLOAD_MAX_SIZE];
 };
 

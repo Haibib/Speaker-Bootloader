@@ -40,14 +40,11 @@ static void boot_put8(uint8_t x) {
     uart_put8(x);
 }
 
-// compute_start_variance condition, and start bytes
-static inline int mic_has_data(void) {
-    
-}
 
 #include "get-code.h"
 
 void notmain(void) {
+    
     uint32_t addr = get_code();
     // if(!addr)
     //     rpi_reboot();

@@ -1,10 +1,12 @@
 PROGS += mic-receive.c
-PROGS += speaker-send.c
+# PROGS += speaker-send.c
+PROGS += main.c
 
 # if you need to override the install
-# BOOTLOADER = my-install
+BOOTLOADER = my-install
 
 COMMON_SRC += i2s.c
+COMMON_SRC += cpyjmp.c
 
 OPT_LEVEL = -Og
 

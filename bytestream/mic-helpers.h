@@ -150,6 +150,7 @@ static int wait_for_sync(uint32_t verbose) {
     } else if (magic_mask == get_mask(SYNC_END_BYTE)) {
         return 2;
     } else {
+        // printk("unexpected magic: got %x, expected %x\n", magic_mask, get_mask(SYNC_MAGIC_BYTE));
         return 0;
     }
 }

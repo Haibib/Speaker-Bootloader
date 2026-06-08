@@ -1,5 +1,6 @@
 # PROGS += speaker-test.c
-PROGS += play_wav.c
+#PROGS += play_wav.c
+PROGS += mic_working.c
 
 # if you need to override the install
 # BOOTLOADER = my-install

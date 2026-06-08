@@ -19,6 +19,7 @@
 #include "rpi.h"
 #include "boot-crc32.h"  // has the crc32 implementation.
 #include "boot-defs.h"   // protocol opcode values.
+#include "mic-helpers.h"
 
 /***************************************************************
  * 1. Helper routines.  You shouldn't need to modify these for
@@ -150,75 +151,84 @@ static void wait_for_data(unsigned usec_timeout) {
     }
 }
 
+
 // IMPLEMENT this routine.
 //
 // Simple bootloader: put all of your code here.
 uint32_t get_code(void) {
+    caches_enable();
+    i2s_init(SAMPLE_RATE);
+    i2s_rx_enable();
 
-    // For Recurssive Bootloader -send Done!!! first so
-    // that if this bootloader was bootloaded, my-install will exit
-
-
-    // 0. keep sending GET_PROG_INFO every 300ms until 
-    // there is data: implement this.
-    wait_for_data(300 * 1000);
-
-    /****************************************************************
-     * Add your code below: 2,3,4,5,6
-     */
-    uint32_t addr = 0;
-
-    // 2. expect: [PUT_PROG_INFO, addr, nbytes, cksum] 
-    //    we echo cksum back in step 4 to help debugging.
-    if(boot_get32() != PUT_PROG_INFO) {
-        boot_err(BOOT_ERROR, "expected PUT_PROG_INFO\n");
-    }
-    addr = boot_get32();
-    unsigned n = boot_get32();
-    unsigned cksum = boot_get32();
-
-    // 3. If the binary will collide with us, abort with a BOOT_ERROR. 
-    // 
-    //    check that the sent code (<base_addr> through 
-    //    <base_addr>+<nbytes>) doesn't collide with
-    //    the bootloader code using the address of <PUT32>
-    //    (the first code address we need) to __prog_end__
-    //    (the last).
-    //
-    //    refer back to:
-    //       - your gprof lab code
-    //       - libpi/include/memmap.h
-    //       - libpi/memmap 
-    //    for definitions.
-    // if((addr + n) >= (uint32_t)&PUT32) {
-    //     boot_err(BOOT_ERROR, "code collides with bootloader\n");
-    // }
-    // 4. send [GET_CODE, cksum] back.
-    boot_put32(GET_CODE);
-    boot_put32(cksum);
-
-    // 5. we expect: [PUT_CODE, <code>]
-    //  read each sent byte and write it starting at 
-    //  <addr> using PUT8
-    //
-    // common mistake: computing the offset incorrectly.
-    if(boot_get32() != PUT_CODE) {
-        boot_err(BOOT_ERROR, "expected PUT_CODE\n");
-    }
+    boot_putk("starting boot\n");
+    uint32_t addr = 0x8000;
     uint32_t safe_addr = HIGHEST_USED_ADDR + 0x100000;
-    for(unsigned i = 0; i < n; i++) {
-        PUT8(safe_addr + i, boot_get8());
-    }
+    int cnt = 0;
 
-    // 6. verify the cksum of the copied code using:
-    //         boot-crc32.h:crc32.
-    //    if fails, abort with a BOOT_ERROR.
-    if(cksum != crc32((uint8_t *)safe_addr, n)) {
-        boot_err(BOOT_ERROR, "checksum failed\n");
+    int start = 0;
+    boot_putk("starting boot\n");
+    uint32_t start_time = timer_get_usec();
+    while(1) {
+        uint32_t end_time = timer_get_usec();
+        uint32_t elapsed = end_time - start_time;
+        //printk("elapsed: %d\n", elapsed);
+        start = wait_for_sync(0);
+        // printk("got start: %d\n", start);
+        if(start == 1) {
+            //boot_putk("recieving\n");
+            payload_t payload;
+
+            payload.size = detect_mask(NULL);
+            payload.cksum = detect_mask(NULL);
+            payload.cksum = payload.cksum | (detect_mask(NULL) << 16);
+
+
+            if(payload.size > PAYLOAD_MAX_SIZE) {
+                boot_putk("payload size too big\n");
+                printk("got size: %d\n", payload.size);
+                continue;
+            }
+            for(int i=0;i<payload.size;i++) {
+                payload.data[i] = detect_mask(NULL);
+            }
+            start_time = timer_get_usec();
+            // printk("received cksum: %x\n", payload.cksum);
+            // for(int i=0;i<payload.size;i++) {
+            //     printk("data[%d]: %d\n", i, payload.data[i]);
+            // }
+
+            uint8_t *data = (uint8_t *)&payload.data[0];
+            uint32_t n = payload.size * NUM_BYTES_PER_PERIOD;
+
+            uint32_t cksum = crc32(data, n);
+            // printk("calculated cksum: %x\n", cksum);
+
+            if(cksum != payload.cksum) {
+                boot_putk("checksum mismatch\n");
+                printk("got cksum: %x, expected cksum: %x\n", payload.cksum, cksum);
+                printk("got size: %d\n", payload.size);
+                printk("total bytes: %d\n", cnt);
+                rpi_reboot();
+            } else {
+                for(unsigned i = 0; i < n; i++) {
+                    PUT8(safe_addr + cnt, data[i]);
+                    cnt++;
+                }
+                continue;
+            }
+        } else if(start == 0 ) {
+            boot_putk("false start\n");
+            continue;
+        } else if(start == 2) {
+            boot_putk("completed recieving program\n");
+            break;
+        }
     }
 
     // 7. send back a BOOT_SUCCESS!
     boot_putk("UART <Atharva Chougule2>: success: Received the program!");
+
+    printk("received %d bytes\n", cnt);
 
     // woo!
     boot_put32(BOOT_SUCCESS);
@@ -231,7 +241,7 @@ uint32_t get_code(void) {
     // delay_ms(500);
     uart_flush_tx();
 
-    cpyjmp_default(addr, (const void *)safe_addr, n);
+    cpyjmp_default(addr, (const void *)safe_addr, cnt);
 
     not_reached()
 }
