@@ -5,22 +5,21 @@
 #include "gpio-raw.h"
 
 
-#define THRESHHOLD_SCALE 0.35
-#define VARIANCE_GATE 0.001
+#define THRESHHOLD_SCALE 0.5
+#define VARIANCE_GATE 0.005
 
 enum { 
-    NUM_BYTES_PER_PERIOD = 1,
+    NUM_BYTES_PER_PERIOD = 2,
 
     SAMPLE_RATE = 59000,
     NUM_FREQS = 8 * NUM_BYTES_PER_PERIOD,
-    SYMBOL_SAMPLES = 1024,
-    WINDOW_SAMPLES = 512,
+    SYMBOL_SAMPLES = 256,
+    WINDOW_SAMPLES = 200,
     WINDOW_OFFSET  = (SYMBOL_SAMPLES - WINDOW_SAMPLES) / 2,
 
 
     RX_WORDS_PER_FRAME = 1,
     SPEAKER_FRAMES_PER_SYMBOL = SYMBOL_SAMPLES / RX_WORDS_PER_FRAME,
-
 
     TONE_BASE_BIN = 9,
     TONE_BIN_SPACING = 8,
@@ -30,15 +29,17 @@ enum {
     TABLE_BITS = 10,
     TABLE_SIZE = 1u << TABLE_BITS,
 
-
     SYNC_CALIBRATION_BYTE = 0xFF,
     SYNC_MAGIC_BYTE = 0x0F,
 
     GPIO_FSEL_INPUT = 0,
     GPIO_FSEL_OUTPUT = 1,
     GPIO_FSEL_ALT0 = 4,
-
     AMPLITUDE_SCALE = 0,
+
+    MIN_FREQ = 1000,
+    MAX_FREQ = 16000,
+    FREQ_SPACING = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 };
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
@@ -52,8 +53,7 @@ static void gpio_set_value(unsigned gpio, unsigned value) {
 }
 
 static inline double get_tone(uint32_t index) {
-    uint32_t bin = TONE_BASE_BIN + index * TONE_BIN_SPACING;
-    return (double)bin * (double)SAMPLE_RATE / (double)WINDOW_SAMPLES;
+    return (double)(MIN_FREQ + index * FREQ_SPACING);
 }
 
 static inline void bytes_to_bits(const uint8_t *bytes, uint8_t bits[NUM_FREQS]) {

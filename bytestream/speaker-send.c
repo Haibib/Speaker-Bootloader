@@ -1,6 +1,6 @@
 #include "rpi.h"
 #include "i2s.h"
-#include "speaker.h"
+#include "speaker-helpers.h"
 
 static uint32_t verbose = 1;
 

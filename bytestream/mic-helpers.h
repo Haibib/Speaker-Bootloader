@@ -28,7 +28,7 @@ static double tone_threshold[NUM_FREQS];
 // }
 
 static double goertzel(const double *samples, int num_samples, double target_tone) {
-    double k = (int)(0.5 + ((double)num_samples * target_tone) / (double)SAMPLE_RATE);
+    double k = (double)num_samples * target_tone / (double)SAMPLE_RATE;
     double coefficient = 2.0 * cos(2.0 * M_PI * k / (double)num_samples);
  
     double first_sample = 0, second_sample = 0;

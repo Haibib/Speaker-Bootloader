@@ -30,7 +30,7 @@ enum {
     MAX_FREQ = 16000,
     FREQ_BUCKET = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
-    DURATION_us = 8678,
+    DURATION_us = 4339,
 };
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
