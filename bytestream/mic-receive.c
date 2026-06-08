@@ -2,7 +2,7 @@
 #include "i2s.h"
 #include "mic-helpers.h"
 
-#define DEBUG_INTERVAL 4
+#define DEBUG_INTERVAL 1000
 
 void notmain(void) {
     caches_enable();
@@ -16,7 +16,7 @@ void notmain(void) {
     uint32_t attempt = 0;
 
     while (1) {
-        uint32_t verbose = (attempt++ % DEBUG_INTERVAL == 0);
+        uint32_t verbose = 0;
         if (!wait_for_sync(verbose)) {
             if (!verbose) printk(".");
             continue;

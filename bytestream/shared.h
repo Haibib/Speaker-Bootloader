@@ -40,7 +40,17 @@ enum {
     MIN_FREQ = 1000,
     MAX_FREQ = 16000,
     FREQ_SPACING = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
+
+    PAYLOAD_MAX_SIZE = 128,
 };
+
+struct payload {
+    uint16_t size;
+    uint16_t cksum;
+    uint16_t data[PAYLOAD_MAX_SIZE];
+};
+
+typedef struct payload payload_t;
 
 static void gpio_set_value(unsigned gpio, unsigned value) {
     unsigned reg = gpio / 10;
