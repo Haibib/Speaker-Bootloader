@@ -86,7 +86,7 @@ static void play_random_start() {
     }
 }
 
-static inline void initial_synchronization(void) {
+static inline void initial_synchronization(int end) {
     uint8_t bits[NUM_FREQS];
     uint8_t pattern[NUM_BYTES_PER_PERIOD];
     play_random_start();
@@ -98,7 +98,7 @@ static inline void initial_synchronization(void) {
     play_combined(bits);
  
     for (uint32_t i = 0; i < NUM_BYTES_PER_PERIOD; i++) {
-        pattern[i] = SYNC_MAGIC_BYTE;
+        pattern[i] = end ? SYNC_END_BYTE : SYNC_MAGIC_BYTE ;
     }
     bytes_to_bits(pattern, bits);
     play_combined(bits);

@@ -145,11 +145,13 @@ static int wait_for_sync(uint32_t verbose) {
     calibrate_thresholds(calibration_magnitudes);
     double magic_magnitudes[NUM_FREQS];
     uint32_t magic_mask = detect_mask(magic_magnitudes);
-    uint32_t expected_mask = get_mask(SYNC_MAGIC_BYTE);
-    if (verbose) {
-        print_debug(variance, calibration_magnitudes, magic_magnitudes, magic_mask, expected_mask);
+    if(magic_mask == get_mask(SYNC_MAGIC_BYTE)) {
+        return 1;
+    } else if (magic_mask == get_mask(SYNC_END_BYTE)) {
+        return 2;
+    } else {
+        return 0;
     }
-    return magic_mask == expected_mask;
 }
 
 #endif
