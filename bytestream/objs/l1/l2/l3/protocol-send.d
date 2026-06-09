@@ -19,8 +19,8 @@ objs/l1/l2/l3//protocol-send.o: protocol-send.c \
  /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_math.h \
  /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/math-protos.h \
  /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/pi-random.h \
- shared.h gpio-raw.h boot-crc32.h hello-world/hello-world.h \
- gpio-blink/gpio-blink.h
+ shared.h gpio-raw.h boot-crc32.h cpyjmp.h get-code.h boot-defs.h \
+ mic-helpers.h
 
 /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h:
 
@@ -68,6 +68,10 @@ gpio-raw.h:
 
 boot-crc32.h:
 
-hello-world/hello-world.h:
+cpyjmp.h:
 
-gpio-blink/gpio-blink.h:
+get-code.h:
+
+boot-defs.h:
+
+mic-helpers.h:
