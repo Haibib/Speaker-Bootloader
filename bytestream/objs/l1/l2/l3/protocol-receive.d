@@ -1,36 +1,36 @@
 objs/l1/l2/l3//protocol-receive.o: protocol-receive.c \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h \
  cpyjmp.h get-code.h boot-crc32.h boot-defs.h mic-helpers.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/rpi-math.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_complex.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_fenv.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_fenv_arm.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/cdefs-compat.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_math.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/rpi-math.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_complex.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_fenv.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_fenv_arm.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/cdefs-compat.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_math.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/math-protos.h \
  i2s.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/bit-support.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/helper-macros.h \
- shared.h gpio-raw.h hello-world/hello-world.h gpio-blink/gpio-blink.h
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/bit-support.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/helper-macros.h \
+ shared.h gpio-raw.h
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h:
 
 cpyjmp.h:
 
@@ -42,34 +42,30 @@ boot-defs.h:
 
 mic-helpers.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/rpi-math.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/rpi-math.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_complex.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_complex.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_fenv.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_fenv.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_fenv_arm.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_fenv_arm.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/cdefs-compat.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/cdefs-compat.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_math.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm//include/openlibm_math.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//lib/libm/math-protos.h:
 
 i2s.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/bit-support.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/bit-support.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/helper-macros.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/helper-macros.h:
 
 shared.h:
 
 gpio-raw.h:
-
-hello-world/hello-world.h:
-
-gpio-blink/gpio-blink.h:

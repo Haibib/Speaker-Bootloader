@@ -247,8 +247,8 @@ static void wait_for_data(unsigned usec_timeout) {
 // }
 
 uint32_t put_code(uint8_t* destination, uint32_t received_length) {
-    boot_putk("UART <Atharva Chougule2>: success: Received the program!");
-    boot_put32(BOOT_SUCCESS);
+    boot_putk("UART <Atharva Chougule2>: success: Received the program!\n");
+    // boot_put32(BOOT_SUCCESS);
     uart_flush_tx();
  
     cpyjmp_default(0x8000, destination, received_length);

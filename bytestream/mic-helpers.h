@@ -80,14 +80,21 @@ static double signal_variance(int num_samples) {
     return variance / num_samples;
 }
 
+
 static void calibrate_thresholds(double *magnitude_outputs) {
-    read_symbol();
-    double magnitudes[NUM_FREQS];
-    get_magnitudes(magnitudes);
+    double magnitudes[NUM_CALIBRATION_SYMBOLS][NUM_FREQS];
+    for(int i=0 ; i<NUM_CALIBRATION_SYMBOLS; i++){
+        read_symbol();
+        get_magnitudes(&magnitudes[i][0]);
+    }
     for (uint32_t i = 0; i < NUM_FREQS; i++) {
-        tone_threshold[i] = THRESHHOLD_SCALE * magnitudes[i];
+        double sum = 0;
+        for(int j=0; j<NUM_CALIBRATION_SYMBOLS; j++) {
+            sum += magnitudes[j][i];
+        }
+        tone_threshold[i] = THRESHHOLD_SCALE * (sum / (double)NUM_CALIBRATION_SYMBOLS);
         if (magnitude_outputs) {
-            magnitude_outputs[i] = magnitudes[i];
+            magnitude_outputs[i] = tone_threshold[i] / THRESHHOLD_SCALE;
         }
     }
 }
@@ -205,6 +212,9 @@ static uint32_t receive_data(uint8_t *destination, int verbose) {
             break;
         }
     }
+    // for(int i=0;i<NUM_FREQS;i++) {
+    //     printk("tone %d  %d Hz  thresh=%f\n", i, (int)get_tone(i), tone_threshold[i]);
+    // }
  
     return total_bytes;
 }
