@@ -37,34 +37,46 @@ static void boot_put8(uint8_t x) {
 #include "hello-world/hello-world.h"
 #include "gpio-blink/gpio-blink.h"
 
+extern unsigned int gpio_blink_bin_len; 
+#define program_length gpio_blink_bin_len
+extern unsigned char gpio_blink_bin[]; 
+#define program gpio_blink_bin
+
 static int verbose = 1;
+static int max_size = 5 * 1024; // 5 MB
 
 void notmain(void) {
     caches_enable();
     i2s_init(SAMPLE_RATE);
     i2s_rx_enable();
+
+    uint8_t compressed_data[max_size];
+    uint32_t received_length = receive_data(compressed_data, verbose);
+    
     uint8_t *destination = (uint8_t *)(HIGHEST_USED_ADDR + 0x100000);
-    uint32_t received_length = receive_data(destination, verbose);
-    printk("received %d bytes, expected %d\n", received_length, hello_world_bin_len);
+    uint32_t decompressed_length = decompress(compressed_data, received_length, destination);
+
+    printk("received %d bytes, decompressed: %d, expected %d\n", received_length, decompressed_length, program_length);
 
     uint32_t num_errors = 0;
     if (verbose) {
-        for (uint32_t i = 0; i < received_length; i++) {
-            if (hello_world_bin[i] != destination[i]) {
+        for (uint32_t i = 0; i < decompressed_length; i++) {
+            if (program[i] != destination[i]) {
                 num_errors++;
             }
+            //printk("%x ,", destination[i]);
         }
     }
     printk("num errors: %d\n", num_errors);
 
-    if (num_errors == 0) {
-        uint32_t addr = put_code(destination, received_length);
-        // if(!addr)
-        //     rpi_reboot();
+    // if (num_errors == 0) {
+    //     uint32_t addr = put_code(destination, received_length);
+    //     // if(!addr)
+    //     //     rpi_reboot();
 
-        // blx to addr.  
-        // could also call it as a function pointer.
-        //BRANCHTO(addr);
-        not_reached();
-    }
+    //     // blx to addr.  
+    //     // could also call it as a function pointer.
+    //     //BRANCHTO(addr);
+    //     not_reached();
+    // }
 }

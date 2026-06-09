@@ -61,7 +61,7 @@ static inline void play_combined(uint8_t* bits) {
         }
     }
     int64_t scaled_amplitude = AMPLITUDE / active;
-    for (uint32_t i = 0; i < SPEAKER_FRAMES_PER_SYMBOL; i++) {
+    for (uint32_t i = 0; i < SYMBOL_SAMPLES; i++) {
         int64_t sample = 0;
         for (uint32_t j = 0; j < NUM_FREQS; j++) {
             if (bits[j]) {
@@ -78,7 +78,7 @@ static inline void play_combined(uint8_t* bits) {
 static void play_random_start() {
     uint32_t phase_step = (uint32_t)((double)get_tone(0) / (double)SAMPLE_RATE * (double)(1ULL << 32));
 
-    for (uint32_t i = 0; i < SPEAKER_FRAMES_PER_SYMBOL; i++) {
+    for (uint32_t i = 0; i < SYMBOL_SAMPLES; i++) {
         uint32_t idx = sine_phase >> (32 - TABLE_BITS);
         int64_t sample = ((int64_t)sine_table[idx] * pi_random()) >> 31;
         i2s_put_frame(sample, sample);
@@ -139,15 +139,15 @@ static inline void send_data(const uint8_t *data, uint32_t length) {
     payload_t payload;
     uint32_t num_chunks = length / PAYLOAD_MAX_BYTES;
     uint32_t last_chunk_length = length % (PAYLOAD_MAX_BYTES);
+    uint32_t total_chunks = num_chunks + (last_chunk_length > 0 ? 1 : 0);
     for (uint32_t i = 0; i < num_chunks; i++) {
         memcpy(payload.data, &data[i * PAYLOAD_MAX_BYTES], PAYLOAD_MAX_BYTES);
-        send_chunk(PAYLOAD_MAX_BYTES, &payload, 0);
+        send_chunk(PAYLOAD_MAX_BYTES, &payload, i + 1 == total_chunks);
     }
     if (last_chunk_length > 0) {
         memcpy(payload.data, &data[num_chunks * PAYLOAD_MAX_BYTES], last_chunk_length);
-        send_chunk(last_chunk_length, &payload, 0);
+        send_chunk(last_chunk_length, &payload, 1);
     }
-    send_chunk(0, &payload, 1);
     printk("sent %d bytes in %d chunk(s)\n", length, num_chunks + (last_chunk_length > 0));
 }
 
@@ -155,7 +155,7 @@ static inline void send_data(const uint8_t *data, uint32_t length) {
 static inline void play_sine(double freq) {
     uint32_t phase_step = (uint32_t)(freq / (double)SAMPLE_RATE * (double)(1ULL << 32));
 
-    for (uint32_t i = 0; i < SPEAKER_FRAMES_PER_SYMBOL; i++) {
+    for (uint32_t i = 0; i < SYMBOL_SAMPLES; i++) {
         uint32_t idx = sine_phase >> (32 - TABLE_BITS);
         int64_t sample = ((int64_t)sine_table[idx] * MAX_AMPLITUDE) >> 31;
         i2s_put_frame(sample, sample);

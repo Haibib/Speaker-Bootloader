@@ -141,6 +141,8 @@ static void print_debug(double variance, const double *calibration_magnitudes, c
 enum {
     CHUNK_START = 1,
     CHUNK_END = 2,
+    FALSE_START = 3,
+    ERROR = 4,
 };
 
 static int wait_for_sync(uint32_t verbose) {
@@ -149,17 +151,17 @@ static int wait_for_sync(uint32_t verbose) {
     calibrate_thresholds(NULL);
     uint32_t magic_mask = detect_mask(NULL);
     if(magic_mask == get_mask(SYNC_MAGIC_BYTE)) {
-        return 1;
+        return CHUNK_START;
     } else if (magic_mask == get_mask(SYNC_END_BYTE)) {
-        return 2;
+        return CHUNK_END;
     }
-    return 0;
+    return FALSE_START;
 }
 
 static int receive_chunk(payload_t *payload) {
     int sync = wait_for_sync(0);
-    if (sync != CHUNK_START) {
-        return sync == CHUNK_END ? -1 : -2;
+    if (sync == FALSE_START) {
+        return FALSE_START;
     }
     uint16_t length = detect_mask(NULL) & 0xFFFF;
     uint32_t checksum_low_bytes = detect_mask(NULL);
@@ -168,7 +170,7 @@ static int receive_chunk(payload_t *payload) {
 
     if (length > PAYLOAD_MAX_BYTES || length % NUM_BYTES_PER_PERIOD != 0) {
         printk("bad header: length=%d\n", length);
-        return 0;
+        return ERROR;
     }
     uint32_t num_periods = length / NUM_BYTES_PER_PERIOD;
     for (uint32_t i = 0; i < num_periods; i++) {
@@ -181,9 +183,9 @@ static int receive_chunk(payload_t *payload) {
     uint32_t computed_cksum = crc32(payload->data, length);
     if (computed_cksum != received_checksum) {
         printk("checksum mismatch: received=%x computed=%x size=%d\n", received_checksum, computed_cksum, length);
-        return 0;
+        return ERROR;
     }
-    return 1;
+    return sync;
 }
 
 static uint32_t receive_data(uint8_t *destination, int verbose) {
@@ -192,16 +194,16 @@ static uint32_t receive_data(uint8_t *destination, int verbose) {
  
     while (1) {
         int result = receive_chunk(&payload);
-        if (result == -2)
+        if (result == FALSE_START) {
             continue;
-        if (result == -1)
-            break;
-        if (result == 0) {
-            printk("checksum mismatch after %d bytes – rebooting\n", total_bytes);
+        } else if (result == ERROR) {
             rpi_reboot();
         }
         memcpy(&destination[total_bytes], payload.data, payload.size);
         total_bytes += payload.size;
+        if (result == CHUNK_END) {
+            break;
+        }
     }
  
     return total_bytes;

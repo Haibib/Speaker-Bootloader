@@ -8,6 +8,7 @@ BOOTLOADER = my-install
 
 COMMON_SRC += i2s.c
 COMMON_SRC += cpyjmp.c
+# COMMON_SRC += lz4.c
 
 OPT_LEVEL = -Og
 
@@ -18,6 +19,7 @@ LIBS += $(LIBM)
 CFLAGS += $(LIBM_INC)
 CFLAGS += -DPRINTF_DISABLE_SUPPORT_FLOAT=1 -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL=1
 CFLAGS += -DPRINTF_DISABLE_SUPPORT_PTRDIFF_T=1
+# CFLAGS += -DLZ4_FREESTANDING=1 -DLZ4_USER_MEMORY_FUNCTIONS -DLZ4_memcpy=__builtin_memcpy -DLZ4_memset=__builtin_memset -DLZ4_memmove=__builtin_memmove
 
 include $(SPEAKER_BOOTLOADER_PATH)/libpi/mk/Makefile.robust-v3
 
