@@ -19,7 +19,8 @@ objs/l1/l2/l3//protocol-send.o: protocol-send.c \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm//include/openlibm_math.h \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//lib/libm/math-protos.h \
  /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/pi-random.h \
- shared.h gpio-raw.h boot-crc32.h hello-world.h
+ shared.h gpio-raw.h boot-crc32.h hello-world/hello-world.h \
+ gpio-blink/gpio-blink.h
 
 /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
 
@@ -67,4 +68,6 @@ gpio-raw.h:
 
 boot-crc32.h:
 
-hello-world.h:
+hello-world/hello-world.h:
+
+gpio-blink/gpio-blink.h:

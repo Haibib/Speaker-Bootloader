@@ -34,7 +34,8 @@ static void boot_put8(uint8_t x) {
 
 
 #include "get-code.h"
-#include "hello-world.h"
+#include "hello-world/hello-world.h"
+#include "gpio-blink/gpio-blink.h"
 
 static int verbose = 1;
 
@@ -56,13 +57,14 @@ void notmain(void) {
     }
     printk("num errors: %d\n", num_errors);
 
+    if (num_errors == 0) {
+        uint32_t addr = put_code(destination, received_length);
+        // if(!addr)
+        //     rpi_reboot();
 
-    // uint32_t addr = put_code(destination, received_length);
-    // if(!addr)
-    //     rpi_reboot();
-
-    // blx to addr.  
-    // could also call it as a function pointer.
-    //BRANCHTO(addr);
-    // not_reached();
+        // blx to addr.  
+        // could also call it as a function pointer.
+        //BRANCHTO(addr);
+        not_reached();
+    }
 }

@@ -4,7 +4,6 @@
 #include "rpi.h"
 #include "gpio-raw.h"
 
-
 #define THRESHHOLD_SCALE 0.5
 #define VARIANCE_GATE 0.005
 

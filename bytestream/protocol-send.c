@@ -2,7 +2,8 @@
 #include "i2s.h"
 #include "speaker-helpers.h"
 #include "boot-crc32.h"
-#include "hello-world.h"
+#include "hello-world/hello-world.h"
+#include "gpio-blink/gpio-blink.h"
 
 static uint32_t verbose = 1;
 

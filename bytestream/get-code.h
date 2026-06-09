@@ -155,96 +155,96 @@ static void wait_for_data(unsigned usec_timeout) {
 // IMPLEMENT this routine.
 //
 // Simple bootloader: put all of your code here.
-uint32_t get_code(void) {
-    caches_enable();
-    i2s_init(SAMPLE_RATE);
-    i2s_rx_enable();
+// uint32_t get_code(void) {
+//     caches_enable();
+//     i2s_init(SAMPLE_RATE);
+//     i2s_rx_enable();
 
-    boot_putk("starting boot\n");
-    uint32_t addr = 0x8000;
-    uint32_t safe_addr = HIGHEST_USED_ADDR + 0x100000;
-    int cnt = 0;
+//     boot_putk("starting boot\n");
+//     uint32_t addr = 0x8000;
+//     uint32_t safe_addr = HIGHEST_USED_ADDR + 0x100000;
+//     int cnt = 0;
 
-    int start = 0;
-    boot_putk("starting boot\n");
-    uint32_t start_time = timer_get_usec();
-    while(1) {
-        uint32_t end_time = timer_get_usec();
-        uint32_t elapsed = end_time - start_time;
-        //printk("elapsed: %d\n", elapsed);
-        start = wait_for_sync(0);
-        // printk("got start: %d\n", start);
-        if(start == 1) {
-            //boot_putk("recieving\n");
-            payload_t payload;
+//     int start = 0;
+//     boot_putk("starting boot\n");
+//     uint32_t start_time = timer_get_usec();
+//     while(1) {
+//         uint32_t end_time = timer_get_usec();
+//         uint32_t elapsed = end_time - start_time;
+//         //printk("elapsed: %d\n", elapsed);
+//         start = wait_for_sync(0);
+//         // printk("got start: %d\n", start);
+//         if(start == 1) {
+//             //boot_putk("recieving\n");
+//             payload_t payload;
 
-            payload.size = detect_mask(NULL);
-            payload.cksum = detect_mask(NULL);
-            payload.cksum = payload.cksum | (detect_mask(NULL) << 16);
+//             payload.size = detect_mask(NULL);
+//             payload.cksum = detect_mask(NULL);
+//             payload.cksum = payload.cksum | (detect_mask(NULL) << 16);
 
 
-            if(payload.size > PAYLOD_MAX_PERIODS) {
-                boot_putk("payload size too big\n");
-                printk("got size: %d\n", payload.size);
-                continue;
-            }
-            for(int i=0;i<payload.size;i++) {
-                payload.data[i] = detect_mask(NULL);
-            }
-            start_time = timer_get_usec();
-            // printk("received cksum: %x\n", payload.cksum);
-            // for(int i=0;i<payload.size;i++) {
-            //     printk("data[%d]: %d\n", i, payload.data[i]);
-            // }
+//             if(payload.size > PAYLOD_MAX_PERIODS) {
+//                 boot_putk("payload size too big\n");
+//                 printk("got size: %d\n", payload.size);
+//                 continue;
+//             }
+//             for(int i=0;i<payload.size;i++) {
+//                 payload.data[i] = detect_mask(NULL);
+//             }
+//             start_time = timer_get_usec();
+//             // printk("received cksum: %x\n", payload.cksum);
+//             // for(int i=0;i<payload.size;i++) {
+//             //     printk("data[%d]: %d\n", i, payload.data[i]);
+//             // }
 
-            uint8_t *data = (uint8_t *)&payload.data[0];
-            uint32_t n = payload.size * NUM_BYTES_PER_PERIOD;
+//             uint8_t *data = (uint8_t *)&payload.data[0];
+//             uint32_t n = payload.size * NUM_BYTES_PER_PERIOD;
 
-            uint32_t cksum = crc32(data, n);
-            // printk("calculated cksum: %x\n", cksum);
+//             uint32_t cksum = crc32(data, n);
+//             // printk("calculated cksum: %x\n", cksum);
 
-            if(cksum != payload.cksum) {
-                boot_putk("checksum mismatch\n");
-                printk("got cksum: %x, expected cksum: %x\n", payload.cksum, cksum);
-                printk("got size: %d\n", payload.size);
-                printk("total bytes: %d\n", cnt);
-                rpi_reboot();
-            } else {
-                for(unsigned i = 0; i < n; i++) {
-                    PUT8(safe_addr + cnt, data[i]);
-                    cnt++;
-                }
-                continue;
-            }
-        } else if(start == 0 ) {
-            boot_putk("false start\n");
-            continue;
-        } else if(start == 2) {
-            boot_putk("completed recieving program\n");
-            break;
-        }
-    }
+//             if(cksum != payload.cksum) {
+//                 boot_putk("checksum mismatch\n");
+//                 printk("got cksum: %x, expected cksum: %x\n", payload.cksum, cksum);
+//                 printk("got size: %d\n", payload.size);
+//                 printk("total bytes: %d\n", cnt);
+//                 rpi_reboot();
+//             } else {
+//                 for(unsigned i = 0; i < n; i++) {
+//                     PUT8(safe_addr + cnt, data[i]);
+//                     cnt++;
+//                 }
+//                 continue;
+//             }
+//         } else if(start == 0 ) {
+//             boot_putk("false start\n");
+//             continue;
+//         } else if(start == 2) {
+//             boot_putk("completed recieving program\n");
+//             break;
+//         }
+//     }
 
-    // 7. send back a BOOT_SUCCESS!
-    boot_putk("UART <Atharva Chougule2>: success: Received the program!");
+//     // 7. send back a BOOT_SUCCESS!
+//     boot_putk("UART <Atharva Chougule2>: success: Received the program!");
 
-    printk("received %d bytes\n", cnt);
+//     printk("received %d bytes\n", cnt);
 
-    // woo!
-    boot_put32(BOOT_SUCCESS);
+//     // woo!
+//     boot_put32(BOOT_SUCCESS);
 
-    // We used to have these delays to stop the unix side from getting 
-    // confused.  I believe it's b/c the code we call re-initializes the 
-    // uart.  Instead we now flush the hardware tx buffer.   If this
-    // isn't working, put the delay back.  However, it makes it much faster
-    // to test multiple programs without it.
-    // delay_ms(500);
-    uart_flush_tx();
+//     // We used to have these delays to stop the unix side from getting 
+//     // confused.  I believe it's b/c the code we call re-initializes the 
+//     // uart.  Instead we now flush the hardware tx buffer.   If this
+//     // isn't working, put the delay back.  However, it makes it much faster
+//     // to test multiple programs without it.
+//     // delay_ms(500);
+//     uart_flush_tx();
 
-    cpyjmp_default(addr, (const void *)safe_addr, cnt);
+//     cpyjmp_default(addr, (const void *)safe_addr, cnt);
 
-    not_reached()
-}
+//     not_reached()
+// }
 
 uint32_t put_code(uint8_t* destination, uint32_t received_length) {
     boot_putk("UART <Atharva Chougule2>: success: Received the program!");
