@@ -1,6 +1,8 @@
 PROGS += mic-receive.c
-# PROGS += speaker-send.c
-PROGS += main.c
+PROGS += speaker-send.c
+PROGS += protocol-receive.c
+PROGS += protocol-send.c
+PROGS += hello-world.c
 
 # if you need to override the install
 BOOTLOADER = my-install

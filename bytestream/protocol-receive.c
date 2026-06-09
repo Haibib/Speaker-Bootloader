@@ -1,11 +1,3 @@
-/*                  DO NOT MODIFY THIS CODE.
- *                  DO NOT MODIFY THIS CODE.
- *                  DO NOT MODIFY THIS CODE.
- *                  DO NOT MODIFY THIS CODE.
- *
- * engler, cs140e: trivial driver for your get_code implementation,
- * which does the actual getting and loading of the code.
- */
 #include "rpi.h"
 #include "cpyjmp.h"
 
@@ -42,15 +34,35 @@ static void boot_put8(uint8_t x) {
 
 
 #include "get-code.h"
+#include "hello-world.h"
+
+static int verbose = 1;
 
 void notmain(void) {
-    
-    uint32_t addr = get_code();
+    caches_enable();
+    i2s_init(SAMPLE_RATE);
+    i2s_rx_enable();
+    uint8_t *destination = (uint8_t *)(HIGHEST_USED_ADDR + 0x100000);
+    uint32_t received_length = receive_data(destination, verbose);
+    printk("received %d bytes, expected %d\n", received_length, hello_world_bin_len);
+
+    uint32_t num_errors = 0;
+    if (verbose) {
+        for (uint32_t i = 0; i < received_length; i++) {
+            if (hello_world_bin[i] != destination[i]) {
+                num_errors++;
+            }
+        }
+    }
+    printk("num errors: %d\n", num_errors);
+
+
+    // uint32_t addr = put_code(destination, received_length);
     // if(!addr)
     //     rpi_reboot();
 
     // blx to addr.  
     // could also call it as a function pointer.
     //BRANCHTO(addr);
-    not_reached();
+    // not_reached();
 }

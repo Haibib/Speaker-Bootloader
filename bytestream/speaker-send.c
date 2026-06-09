@@ -14,8 +14,8 @@ void notmain(void) {
     const char *msg = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSTTUUVVWWXXYYZZ";
 
     for (uint32_t i = 0; i < 2000; i++) {
-        initial_synchronization();
-        send_data((const uint8_t *)msg, strlen(msg), verbose);
+        initial_synchronization(0);
+        send_data((const uint8_t *)msg, strlen(msg));
         delay_ms(1000);
     }
 }

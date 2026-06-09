@@ -5,6 +5,7 @@
 #include "rpi-math.h"
 #include "i2s.h"
 #include "shared.h"
+#include "boot-crc32.h"
 
 static double symbol_samples[SYMBOL_SAMPLES]; 
 static double window_samples[WINDOW_SAMPLES]; 
@@ -137,22 +138,73 @@ static void print_debug(double variance, const double *calibration_magnitudes, c
     }
 }
 
+enum {
+    CHUNK_START = 1,
+    CHUNK_END = 2,
+};
+
 static int wait_for_sync(uint32_t verbose) {
-    double variance = 0;
-    while ((variance = signal_variance(10)) < VARIANCE_GATE) {}
+    while (signal_variance(NUM_SAMPLES_VARIANCE) < VARIANCE_GATE);
     read_symbol();
-    double calibration_magnitudes[NUM_FREQS];
-    calibrate_thresholds(calibration_magnitudes);
-    double magic_magnitudes[NUM_FREQS];
-    uint32_t magic_mask = detect_mask(magic_magnitudes);
+    calibrate_thresholds(NULL);
+    uint32_t magic_mask = detect_mask(NULL);
     if(magic_mask == get_mask(SYNC_MAGIC_BYTE)) {
         return 1;
     } else if (magic_mask == get_mask(SYNC_END_BYTE)) {
         return 2;
-    } else {
-        // printk("unexpected magic: got %x, expected %x\n", magic_mask, get_mask(SYNC_MAGIC_BYTE));
+    }
+    return 0;
+}
+
+static int receive_chunk(payload_t *payload) {
+    int sync = wait_for_sync(0);
+    if (sync != CHUNK_START) {
+        return sync == CHUNK_END ? -1 : -2;
+    }
+    uint16_t length = detect_mask(NULL) & 0xFFFF;
+    uint32_t checksum_low_bytes = detect_mask(NULL);
+    uint32_t checksum_high_bytes = detect_mask(NULL);
+    uint32_t received_checksum = (checksum_high_bytes << 16) | checksum_low_bytes;
+
+    if (length > PAYLOAD_MAX_BYTES || length % NUM_BYTES_PER_PERIOD != 0) {
+        printk("bad header: length=%d\n", length);
         return 0;
     }
+    uint32_t num_periods = length / NUM_BYTES_PER_PERIOD;
+    for (uint32_t i = 0; i < num_periods; i++) {
+        uint32_t mask = detect_mask(NULL);
+        payload->data[i * NUM_BYTES_PER_PERIOD] = mask & 0xFF;
+        payload->data[i * NUM_BYTES_PER_PERIOD + 1] = (mask >> 8) & 0xFF;
+    }
+    payload->size = length;
+    payload->cksum = received_checksum;
+    uint32_t computed_cksum = crc32(payload->data, length);
+    if (computed_cksum != received_checksum) {
+        printk("checksum mismatch: received=%x computed=%x size=%d\n", received_checksum, computed_cksum, length);
+        return 0;
+    }
+    return 1;
+}
+
+static uint32_t receive_data(uint8_t *destination, int verbose) {
+    uint32_t total_bytes = 0;
+    payload_t payload;
+ 
+    while (1) {
+        int result = receive_chunk(&payload);
+        if (result == -2)
+            continue;
+        if (result == -1)
+            break;
+        if (result == 0) {
+            printk("checksum mismatch after %d bytes – rebooting\n", total_bytes);
+            rpi_reboot();
+        }
+        memcpy(&destination[total_bytes], payload.data, payload.size);
+        total_bytes += payload.size;
+    }
+ 
+    return total_bytes;
 }
 
 #endif

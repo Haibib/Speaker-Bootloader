@@ -16,7 +16,7 @@ enum {
     SYMBOL_SAMPLES = 512,
     WINDOW_SAMPLES = 400,
     WINDOW_OFFSET  = (SYMBOL_SAMPLES - WINDOW_SAMPLES) / 2,
-
+    NUM_SAMPLES_VARIANCE = 10,
 
     RX_WORDS_PER_FRAME = 1,
     SPEAKER_FRAMES_PER_SYMBOL = SYMBOL_SAMPLES / RX_WORDS_PER_FRAME,
@@ -42,13 +42,16 @@ enum {
     MAX_FREQ = 16000,
     FREQ_SPACING = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
-    PAYLOAD_MAX_SIZE = 128,
+
+    PAYLOAD_MAX_BYTES = 256,
+    PAYLOD_MAX_PERIODS = PAYLOAD_MAX_BYTES / NUM_BYTES_PER_PERIOD,
+    CHUNK_DELAY_US = 1000,
 };
 
 struct payload {
     uint16_t size;
     uint32_t cksum;
-    uint16_t data[PAYLOAD_MAX_SIZE];
+    uint8_t data[PAYLOAD_MAX_BYTES];
 };
 
 typedef struct payload payload_t;

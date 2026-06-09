@@ -1,35 +1,35 @@
 objs/l1/l2/l3//i2s.o: i2s.c \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/bit-support.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/bit-support.h \
  i2s.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h \
- /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/helper-macros.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h \
+ /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/helper-macros.h \
  shared.h gpio-raw.h
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/bit-support.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/bit-support.h:
 
 i2s.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h:
 
-/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/helper-macros.h:
+/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/helper-macros.h:
 
 shared.h:
 

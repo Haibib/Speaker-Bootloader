@@ -6,6 +6,7 @@
 #include "i2s.h"
 #include "pi-random.h"
 #include "shared.h"
+#include "boot-crc32.h"
 
 enum {
     gain_pin = 23,
@@ -13,9 +14,8 @@ enum {
 };
 
 static void amplifier_enable(void) {
-    gpio_set_value(gain_pin, GPIO_FSEL_OUTPUT);
-    gpio_set_value(sd_pin, GPIO_FSEL_OUTPUT);
-
+    gpio_set_output(gain_pin);
+    gpio_set_output(sd_pin);
     put32(GPIO_CLR0, 1u << gain_pin);
     put32(GPIO_SET0, 1u << sd_pin);
 }
@@ -104,35 +104,51 @@ static inline void initial_synchronization(int end) {
     play_combined(bits);
 }
 
-static inline void send_data(const uint8_t *data, uint32_t length, uint32_t verbose) {
+static inline void send_header(uint16_t length, uint32_t checksum) {
     uint8_t bits[NUM_FREQS];
-    uint8_t chunk[NUM_BYTES_PER_PERIOD];
-    uint32_t num_periods = (length + NUM_BYTES_PER_PERIOD - 1) / NUM_BYTES_PER_PERIOD;
-    char debug_print[num_periods][NUM_FREQS + 1];
-    uint32_t differences[num_periods];
+    uint8_t length_bytes[NUM_BYTES_PER_PERIOD];
+    length_bytes[1] = (uint8_t)((length >> 8) & 0xFF);
+    length_bytes[0] = (uint8_t)(length & 0xFF);
+    bytes_to_bits(length_bytes, bits);
+    play_combined(bits);
+    uint8_t checksum_bytes[NUM_BYTES_PER_PERIOD];
+    checksum_bytes[0] = (uint8_t)(checksum & 0xFF);
+    checksum_bytes[1] = (uint8_t)((checksum >> 8) & 0xFF);
+    bytes_to_bits(checksum_bytes, bits);
+    play_combined(bits);
+    checksum_bytes[0] = (uint8_t)((checksum >> 16) & 0xFF);
+    checksum_bytes[1] = (uint8_t)((checksum >> 24) & 0xFF);
+    bytes_to_bits(checksum_bytes, bits);
+    play_combined(bits);
+}
 
-    for (uint32_t i = 0; i < num_periods; i++) {
-        for (uint32_t j = 0; j < NUM_BYTES_PER_PERIOD; j++) {
-            uint32_t index = i * NUM_BYTES_PER_PERIOD + j;
-            chunk[j] = (index < length) ? data[index] : 0;
-        }
-        bytes_to_bits(chunk, bits);
-        uint32_t start = timer_get_usec();
+static inline void send_chunk(uint32_t length, payload_t* payload, int end) {
+    payload->size = length;
+    payload->cksum = crc32(payload->data, payload->size);
+    uint8_t bits[NUM_FREQS];
+    initial_synchronization(end);
+    send_header(payload->size, payload->cksum);
+    for (uint32_t i = 0; i < payload->size; i += NUM_BYTES_PER_PERIOD) {
+        bytes_to_bits(&payload->data[i], bits);
         play_combined(bits);
-        uint32_t end = timer_get_usec();
-        differences[i] = end - start;
-        if (verbose) {
-            bits_to_str(bits, debug_print[i]);
-        }
     }
-    
-    if (verbose) {
-        for (uint32_t i = 0; i < num_periods; i++) {
-            printk("sending chunk %d: difference: %d\n", i, differences[i]);
-        }
-        printk("speaker frames per symbol: %d\n", SPEAKER_FRAMES_PER_SYMBOL);
-        printk("freq bucket: %d\n", get_tone(1) - get_tone(0));
+    delay_us(CHUNK_DELAY_US);
+}
+
+static inline void send_data(const uint8_t *data, uint32_t length) {
+    payload_t payload;
+    uint32_t num_chunks = length / PAYLOAD_MAX_BYTES;
+    uint32_t last_chunk_length = length % (PAYLOAD_MAX_BYTES);
+    for (uint32_t i = 0; i < num_chunks; i++) {
+        memcpy(payload.data, &data[i * PAYLOAD_MAX_BYTES], PAYLOAD_MAX_BYTES);
+        send_chunk(PAYLOAD_MAX_BYTES, &payload, 0);
     }
+    if (last_chunk_length > 0) {
+        memcpy(payload.data, &data[num_chunks * PAYLOAD_MAX_BYTES], last_chunk_length);
+        send_chunk(last_chunk_length, &payload, 0);
+    }
+    send_chunk(0, &payload, 1);
+    printk("sent %d bytes in %d chunk(s)\n", length, num_chunks + (last_chunk_length > 0));
 }
 
 

@@ -183,7 +183,7 @@ uint32_t get_code(void) {
             payload.cksum = payload.cksum | (detect_mask(NULL) << 16);
 
 
-            if(payload.size > PAYLOAD_MAX_SIZE) {
+            if(payload.size > PAYLOD_MAX_PERIODS) {
                 boot_putk("payload size too big\n");
                 printk("got size: %d\n", payload.size);
                 continue;
@@ -245,4 +245,14 @@ uint32_t get_code(void) {
 
     not_reached()
 }
+
+uint32_t put_code(uint8_t* destination, uint32_t received_length) {
+    boot_putk("UART <Atharva Chougule2>: success: Received the program!");
+    boot_put32(BOOT_SUCCESS);
+    uart_flush_tx();
+ 
+    cpyjmp_default(0x8000, destination, received_length);
+    not_reached();
+}
+
 #endif
