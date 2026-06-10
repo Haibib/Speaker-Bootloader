@@ -1,25 +1,25 @@
 objs/cstart.o: staff-src/cstart.c \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h \
- /Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/memmap.h
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h \
+ /Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/memmap.h
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/demand.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/demand.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/gpio.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/gpio.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/rpi-constants.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/rpi-constants.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/your-prototypes.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/your-prototypes.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/libc/rpi-rand.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/libc/rpi-rand.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/cycle-count.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/cycle-count.h:
 
-/Users/hrgly1/Desktop/CS/CS240LX/speaker-bootloader//libpi/include/memmap.h:
+/Users/atharvachougule/cs140e/SPEAKER-BOOTLOADER//libpi/include/memmap.h:

@@ -95,8 +95,11 @@ static inline void initial_synchronization(int end) {
         pattern[i] = SYNC_CALIBRATION_BYTE;
     }
     bytes_to_bits(pattern, bits);
-    play_combined(bits);
- 
+
+    for (int i = 0; i < NUM_CALIBRATION_SYMBOLS; i++) {
+        play_combined(bits);
+    }
+
     for (uint32_t i = 0; i < NUM_BYTES_PER_PERIOD; i++) {
         pattern[i] = end ? SYNC_END_BYTE : SYNC_MAGIC_BYTE ;
     }

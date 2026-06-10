@@ -15,7 +15,7 @@ enum {
     NUM_SAMPLES_VARIANCE = 10,
     // Most optimized I could get it with manual binary search while being reliable
     // (can just change to higher later/during demo if we want)
-    SYMBOL_SAMPLES = 272,
+    SYMBOL_SAMPLES = 148,
     WINDOW_SAMPLES = SYMBOL_SAMPLES - NUM_SAMPLES_VARIANCE * 2,
     WINDOW_OFFSET  = (SYMBOL_SAMPLES - WINDOW_SAMPLES) / 2,
 
@@ -25,6 +25,7 @@ enum {
     TABLE_SIZE = 1u << TABLE_BITS,
 
     SYNC_CALIBRATION_BYTE = 0xFF,
+    NUM_CALIBRATION_SYMBOLS = 10,
     SYNC_MAGIC_BYTE = 0x0F,
     SYNC_END_BYTE = 0xF0,
 
