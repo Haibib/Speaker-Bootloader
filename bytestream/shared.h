@@ -39,7 +39,10 @@ enum {
     FREQ_SPACING = (MAX_FREQ - MIN_FREQ) / (NUM_FREQS - 1),
 
     PAYLOAD_MAX_BYTES = 4096,
-    CHUNK_DELAY_US = 500,
+
+    // This should be atleast SYMBOL_SAMPLES / SAMPLE_RATE * 1e6,
+    // using 5000 as conservative estimate
+    CHUNK_DELAY_US = 5000,
 };
 
 struct payload {
